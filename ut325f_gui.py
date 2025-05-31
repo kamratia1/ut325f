@@ -286,9 +286,9 @@ class TempLoggerApp:
                     frame, buffer = self.find_frame(buffer)
                     if frame is None:
                         break
-                    if not self.paused:
-                        temps = self.parse_frame(frame)
-                        self.root.after(0, self.handle_new_data, temps)
+                    # Always update the temperature labels, even if not logging
+                    temps = self.parse_frame(frame)
+                    self.root.after(0, self.handle_new_data, temps)
             except Exception as e:
                 if self.running:
                     print("Serial error:", e)
@@ -324,6 +324,7 @@ class TempLoggerApp:
 
     def handle_new_data(self, temps):
         now = time.time()
+        # Update the temperature labels regardless of logging state
         for i, val in enumerate(temps):
             color = self.color_combos[i].get_color()
             self.temp_labels[i]['foreground'] = color
@@ -332,6 +333,7 @@ class TempLoggerApp:
             else:
                 self.temp_labels[i]['text'] = "-"
 
+        # Only log data for graph when logging and not paused
         if self.logging and not self.paused:
             if not self.timestamps:
                 self.start_time = now
