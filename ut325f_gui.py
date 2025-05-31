@@ -428,7 +428,19 @@ class TempLoggerApp:
         if not self.has_data():
             messagebox.showinfo("No data", "No data to save.")
             return
-        path = filedialog.asksaveasfilename(title="Save CSV", defaultextension=".csv", filetypes=[("CSV files","*.csv")])
+
+        # Use test start time as the default file name
+        if self.test_start_time:
+            default_name = self.test_start_time.strftime("%Y-%m-%d_%H-%M-%S") + ".csv"
+        else:
+            default_name = "temperature_log.csv"
+
+        path = filedialog.asksaveasfilename(
+            title="Save CSV",
+            defaultextension=".csv",
+            initialfile=default_name,
+            filetypes=[("CSV files", "*.csv")]
+        )
         if not path:
             return
         try:
@@ -512,3 +524,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = TempLoggerApp(root)
     root.mainloop()
+    
